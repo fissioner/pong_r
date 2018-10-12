@@ -17,10 +17,10 @@ This project is designed to test your understanding of Javascript, React and gen
 
 ## Usage
 
-Player 1 (left) controls:
-* 'W' - paddle up <br>
-* 'S' - paddle down
+Player 1 (left paddle) Controls:
+    * 'W' - paddle up
+    * 'S' - paddle down
 
-Player 2 (right) controls:
-* 'Arrow Up' - paddle up
-* 'Arrow Down' - paddle down
+Player 2 (right paddle) Controls:
+    * 'Arrow Up' - paddle up
+    * 'Arrow Down' - paddle down

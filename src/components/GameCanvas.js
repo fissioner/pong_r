@@ -9,6 +9,12 @@ class GameInterface extends Component {
         this._initializeGameCanvas()
     }
 
+    shouldComponentUpdate = props => {
+        if (props.velocity) this._updateBallVelocity(props.velocity)
+
+        return false;
+    }
+
 
     _initializeGameCanvas = () => {
         this.canvas = this.refs.pong_canvas;
@@ -31,6 +37,13 @@ class GameInterface extends Component {
         this.gameBall = new this.GameClasses.Box({ x: (this.canvas.width / 2), y: (this.canvas.height / 2), width: 15, height: 15, color: '#FF0000', velocityX: 1, velocityY: 1 });
 
         this._renderLoop();
+    }
+
+    _updateBallVelocity = val => {
+        let newX = this.gameBall.velocityX > 0 ? val : val * -1;
+        let newY = this.gameBall.velocityY > 0 ? val : val * -1;
+        this.gameBall.velocityX = newX;
+        this.gameBall.velocityY = newY;
     }
 
     _renderLoop = () => {
@@ -81,7 +94,7 @@ class GameInterface extends Component {
             )
         ) {
             this.gameBall.velocityX = this.gameBall.velocityX * -1;
-        } else if ((this.gameBall.x + this.gameBall.velocityX) < this.player1.x) {
+        } else if ((this.gameBall.x + this.gameBall.velocityX) < (this.player1.x - 15)) {
             this.p2Score += 1;
             this.gameBall.velocityX = this.gameBall.velocityX * -1;
             this.gameBall.x = ((this.canvas.width / 2) + this.gameBall.velocityX);

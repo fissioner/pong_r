@@ -4,7 +4,7 @@ const GameControls = props => {
 
     return (
         <article>
-            
+            <button onClick={props.updateVel}>Click Meh!</button>
         </article>
     )
 }
