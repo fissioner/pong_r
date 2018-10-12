@@ -9,6 +9,7 @@ class GameInterface extends Component {
         this._initializeGameCanvas()
     }
 
+
     _initializeGameCanvas = () => {
         this.canvas = this.refs.pong_canvas;
         this.ctx = this.canvas.getContext('2d');
@@ -100,13 +101,13 @@ class GameInterface extends Component {
     _displayScore1 = () => {
         this.ctx.font = '20px Arial';
         this.ctx.fillStyle = 'rgb(255, 255, 255)';
-        this.ctx.fillText(this.p1Score, ((this.canvas.width / 2) - 50), 30);
+        this.ctx.fillText(this.p1Score, ((this.canvas.width / 2) - (this.p1Score > 9 ? 55 : 45)), 30);
     }
 
     _displayScore2 = () => {
         this.ctx.font = '20px Arial';
         this.ctx.fillStyle = 'rgb(255, 255, 255)';
-        this.ctx.fillText(this.p2Score, ((this.canvas.width / 2) + 40), 30);
+        this.ctx.fillText(this.p2Score, ((this.canvas.width / 2) + 33), 30);
     }
 
     _userInput = () => {
