@@ -24,10 +24,10 @@ class GameInterface extends Component {
         window.addEventListener('keydown', e => { this.keys[e.keyCode] = 1; e.preventDefault(); })
         window.addEventListener('keyup', e => delete this.keys[e.keyCode])
 
-        this.player1 = new this.GameClasses.Box({ x: 10, y: 200, width: 15, height: 80, color: '#FFF', gravity: 2 });
-        this.player2 = new this.GameClasses.Box({ x: 725, y: 200, width: 15, height: 80, color: '#FFF', gravity: 2 });
+        this.player1 = new this.GameClasses.Box({ x: 10, y: 200, width: 15, height: 80, color: '#FFF', velocityY: 2 });
+        this.player2 = new this.GameClasses.Box({ x: 725, y: 200, width: 15, height: 80, color: '#FFF', velocityY: 2 });
         this.boardDivider = new this.GameClasses.Box({ x: ((this.canvas.width / 2) - 2.5), y: -1, width: 5, height: (this.canvas.height + 1), color: '#FFF' });
-        this.gameBall = new this.GameClasses.Box({ x: (this.canvas.width / 2), y: (this.canvas.height / 2), width: 15, height: 15, color: '#FF0000', speed: 1, gravity: 1 });
+        this.gameBall = new this.GameClasses.Box({ x: (this.canvas.width / 2), y: (this.canvas.height / 2), width: 15, height: 15, color: '#FF0000', velocityX: 1, velocityY: 1 });
 
         this._renderLoop();
     }
@@ -55,13 +55,13 @@ class GameInterface extends Component {
     }
     
     _ballCollisionY = () => {
-        if (((this.gameBall.y + this.gameBall.gravity) <= 0) || ((this.gameBall.y + this.gameBall.gravity + this.gameBall.height) >= this.canvas.height)) {
-            this.gameBall.gravity = this.gameBall.gravity * -1;
-            this.gameBall.x += this.gameBall.speed;
-            this.gameBall.y += this.gameBall.gravity;
+        if (((this.gameBall.y + this.gameBall.velocityY) <= 0) || ((this.gameBall.y + this.gameBall.velocityY + this.gameBall.height) >= this.canvas.height)) {
+            this.gameBall.velocityY = this.gameBall.velocityY * -1;
+            this.gameBall.x += this.gameBall.velocityX;
+            this.gameBall.y += this.gameBall.velocityY;
         } else {
-            this.gameBall.x += this.gameBall.speed;
-            this.gameBall.y += this.gameBall.gravity;
+            this.gameBall.x += this.gameBall.velocityX;
+            this.gameBall.y += this.gameBall.velocityY;
         }
         this._ballCollisionX();
     }
@@ -69,30 +69,30 @@ class GameInterface extends Component {
     _ballCollisionX = () => {
         if (
             (
-                ((this.gameBall.x + this.gameBall.speed) <= (this.player1.x + this.player1.width)) &&
-                ((this.gameBall.y + this.gameBall.gravity) > this.player1.y) &&
-                ((this.gameBall.y + this.gameBall.gravity) <= (this.player1.y + this.player1.height))
+                ((this.gameBall.x + this.gameBall.velocityX) <= (this.player1.x + this.player1.width)) &&
+                ((this.gameBall.y + this.gameBall.velocityY) > this.player1.y) &&
+                ((this.gameBall.y + this.gameBall.velocityY) <= (this.player1.y + this.player1.height))
             ) ||
             (
-                ((this.gameBall.x + this.gameBall.width + this.gameBall.speed) >= this.player2.x) &&
-                ((this.gameBall.y + this.gameBall.gravity) > this.player2.y) &&
-                ((this.gameBall.y + this.gameBall.gravity) <= (this.player2.y + this.player2.height))
+                ((this.gameBall.x + this.gameBall.width + this.gameBall.velocityX) >= this.player2.x) &&
+                ((this.gameBall.y + this.gameBall.velocityY) > this.player2.y) &&
+                ((this.gameBall.y + this.gameBall.velocityY) <= (this.player2.y + this.player2.height))
             )
         ) {
-            this.gameBall.speed = this.gameBall.speed * -1;
-        } else if ((this.gameBall.x + this.gameBall.speed) < this.player1.x) {
+            this.gameBall.velocityX = this.gameBall.velocityX * -1;
+        } else if ((this.gameBall.x + this.gameBall.velocityX) < this.player1.x) {
             this.p2Score += 1;
-            this.gameBall.speed = this.gameBall.speed * -1;
-            this.gameBall.x = ((this.canvas.width / 2) + this.gameBall.speed);
-            this.gameBall.y = ((this.canvas.height / 2) + this.gameBall.gravity);
-        } else if ((this.gameBall.x + this.gameBall.speed) > (this.player2.x + this.player2.width)) {
+            this.gameBall.velocityX = this.gameBall.velocityX * -1;
+            this.gameBall.x = ((this.canvas.width / 2) + this.gameBall.velocityX);
+            this.gameBall.y = ((this.canvas.height / 2) + this.gameBall.velocityY);
+        } else if ((this.gameBall.x + this.gameBall.velocityX) > (this.player2.x + this.player2.width)) {
             this.p1Score += 1;
-            this.gameBall.speed = this.gameBall.speed * -1;
-            this.gameBall.x = ((this.canvas.width / 2) + this.gameBall.speed);
-            this.gameBall.y = ((this.canvas.height / 2) + this.gameBall.gravity);
+            this.gameBall.velocityX = this.gameBall.velocityX * -1;
+            this.gameBall.x = ((this.canvas.width / 2) + this.gameBall.velocityX);
+            this.gameBall.y = ((this.canvas.height / 2) + this.gameBall.velocityY);
         } else {
-            this.gameBall.x += this.gameBall.speed;
-            this.gameBall.y += this.gameBall.gravity;
+            this.gameBall.x += this.gameBall.velocityX;
+            this.gameBall.y += this.gameBall.velocityY;
         }
         this._drawRender();
     }
@@ -111,29 +111,29 @@ class GameInterface extends Component {
 
     _userInput = () => {
         if (87 in this.keys) {
-            if ((this.player1.y - this.player1.gravity) > 0) this.player1.y -= this.player1.gravity;
+            if ((this.player1.y - this.player1.velocityY) > 0) this.player1.y -= this.player1.velocityY;
         } else if (83 in this.keys) {
-            if ((this.player1.y + this.player1.height + this.player1.gravity) < this.canvas.height) this.player1.y += this.player1.gravity;
+            if ((this.player1.y + this.player1.height + this.player1.velocityY) < this.canvas.height) this.player1.y += this.player1.velocityY;
         }
 
         if (38 in this.keys) {
-            if ((this.player2.y - this.player2.gravity) > 0) this.player2.y -= this.player2.gravity;
+            if ((this.player2.y - this.player2.velocityY) > 0) this.player2.y -= this.player2.velocityY;
         } else if (40 in this.keys) {
-            if ((this.player2.y + this.player2.height + this.player2.gravity) < this.canvas.height) this.player2.y += this.player2.gravity;
+            if ((this.player2.y + this.player2.height + this.player2.velocityY) < this.canvas.height) this.player2.y += this.player2.velocityY;
         }
     }
 
     GameClasses = (() => {
         return {
             Box: function Box(opts) {
-                let { x, y, width, height, color, speed, gravity } = opts;
+                let { x, y, width, height, color, velocityX, velocityY } = opts;
                 this.x = x || 10;
                 this.y = y || 10;
                 this.width = width || 40;
                 this.height = height || 50;
                 this.color = color || '#FFF';
-                this.speed = speed || 2;
-                this.gravity = gravity || 2;
+                this.velocityX = velocityX || 2;
+                this.velocityY = velocityY || 2;
             }
         }
     })()
