@@ -124,17 +124,23 @@ class GameInterface extends Component {
     }
 
     _userInput = () => {
-        if (87 in this.keys) {
-            if ((this.player1.y - this.player1.velocityY) > 0) this.player1.y -= this.player1.velocityY;
-        } else if (83 in this.keys) {
-            if ((this.player1.y + this.player1.height + this.player1.velocityY) < this.canvas.height) this.player1.y += this.player1.velocityY;
-        }
+        if (87 in this.keys && ((this.player1.y - this.player1.velocityY) > 0)) this.player1.y -= this.player1.velocityY;
+        else if (83 in this.keys && (this.player1.y + this.player1.height + this.player1.velocityY) < this.canvas.height) this.player1.y += this.player1.velocityY;
 
-        if (38 in this.keys) {
-            if ((this.player2.y - this.player2.velocityY) > 0) this.player2.y -= this.player2.velocityY;
-        } else if (40 in this.keys) {
-            if ((this.player2.y + this.player2.height + this.player2.velocityY) < this.canvas.height) this.player2.y += this.player2.velocityY;
-        }
+        if (38 in this.keys && (this.player2.y - this.player2.velocityY) > 0) this.player2.y -= this.player2.velocityY;
+        else if (40 in this.keys && (this.player2.y + this.player2.height + this.player2.velocityY) < this.canvas.height) this.player2.y += this.player2.velocityY;
+
+        // if (87 in this.keys) {
+        //     if ((this.player1.y - this.player1.velocityY) > 0) this.player1.y -= this.player1.velocityY;
+        // } else if (83 in this.keys) {
+        //     if ((this.player1.y + this.player1.height + this.player1.velocityY) < this.canvas.height) this.player1.y += this.player1.velocityY;
+        // }
+
+        // if (38 in this.keys) {
+        //     if ((this.player2.y - this.player2.velocityY) > 0) this.player2.y -= this.player2.velocityY;
+        // } else if (40 in this.keys) {
+        //     if ((this.player2.y + this.player2.height + this.player2.velocityY) < this.canvas.height) this.player2.y += this.player2.velocityY;
+        // }
     }
 
     GameClasses = (() => {
