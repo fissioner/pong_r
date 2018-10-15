@@ -39,7 +39,7 @@ class GameCanvas extends Component {
       this._ballCollisionY();
       this._userInput(this.player1);
       this._userInput(this.player2);
-      window.requestAnimationFrame(this._renderLoop);
+      this.frameId = window.requestAnimationFrame(this._renderLoop);
    }
 
    // watch ball movement in Y dimension and handle top/bottom boundary collisions, then call _ballCollisionX
