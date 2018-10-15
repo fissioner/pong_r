@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class GameInterface extends Component {
+class GameCanvas extends Component {
     constructor() {
         super()
     }
@@ -19,9 +19,6 @@ class GameInterface extends Component {
     _initializeGameCanvas = () => {
         this.canvas = this.refs.pong_canvas;
         this.ctx = this.canvas.getContext('2d');
-
-        this.cW = this.canvas.width;
-        this.cH = this.canvas.height;
 
         this.p1Score = 0;
         this.p2Score = 0;
@@ -166,4 +163,4 @@ class GameInterface extends Component {
     }
 }
 
-export default GameInterface;
+export default GameCanvas;
