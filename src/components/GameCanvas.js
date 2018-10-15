@@ -6,32 +6,51 @@ class GameCanvas extends Component {
    }
 
    componentDidMount = () => {
-      this._initializeGameCanvas()
+      this._initializeGameCanvas(false)
+   }
+
+   shouldComponentUpdate = np => {
+      if (np.gameInitted === 'start' && this.props.gameInitted !== 'start') {
+         this._clearRefs();
+         this._initializeGameCanvas(true);
+      }
+
+      return false;
    }
 
 
-   _initializeGameCanvas = () => {
+   _initializeGameCanvas = go => {
       // initialize canvas element and bind it to our React class
-      this.canvas = this.refs.pong_canvas;
-      this.ctx = this.canvas.getContext('2d');
+      if (!this.canvas) this.canvas = this.refs.pong_canvas;
+      if (!this.ctx) this.ctx = this.canvas.getContext('2d');
 
       // declare initial variables
+      this.maxScore = this.props.maxScore || 10;
       this.p1Score = 0;
       this.p2Score = 0;
       this.keys = {};
 
       // add keyboard input listeners to handle user interactions
-      window.addEventListener('keydown', e => { this.keys[e.keyCode] = 1; e.preventDefault(); })
+      window.addEventListener('keydown', e => { this.keys[e.keyCode] = 1; if (e.target.nodeName !== 'INPUT') e.preventDefault(); })
       window.addEventListener('keyup', e => delete this.keys[e.keyCode])
 
       // instantiate our game elements
-      this.player1 = new this.GameClasses.Box({ x: 10, y: 200, width: 15, height: 80, color: '#FFF', velocityY: 2 });
-      this.player2 = new this.GameClasses.Box({ x: 725, y: 200, width: 15, height: 80, color: '#FFF', velocityY: 2 });
+      let { ballVelocity, p1Color, p2Color, ballColor } = this.props;
+      this.player1 = new this.GameClasses.Box({ x: 10, y: 200, width: 15, height: 80, color: p1Color || '#FFF', velocityY: 2 });
+      this.player2 = new this.GameClasses.Box({ x: 725, y: 200, width: 15, height: 80, color: p2Color || '#FFF', velocityY: 2 });
       this.boardDivider = new this.GameClasses.Box({ x: ((this.canvas.width / 2) - 2.5), y: -1, width: 5, height: (this.canvas.height + 1), color: '#FFF' });
-      this.gameBall = new this.GameClasses.Box({ x: (this.canvas.width / 2), y: (this.canvas.height / 2), width: 15, height: 15, color: '#FF0000', velocityX: 1, velocityY: 1 });
+      this.gameBall = new this.GameClasses.Box({ x: (this.canvas.width / 2), y: (this.canvas.height / 2), width: 15, height: 15, color: ballColor || '#FF0000', velocityX: ballVelocity || 1, velocityY: ballVelocity || 1 });
 
       // start render loop
-      this._renderLoop();
+      if (go) this._renderLoop();
+      else this._drawRender();
+   }
+
+   _clearRefs = () => {
+      window.cancelAnimationFrame(this.frameId);
+      [ 'canvas', 'ctx', 'player1', 'player2', 'boardDivider', 'gameBall' ].forEach(c => delete this[c]);
+      window.removeEventListener('keydown', e => { this.keys[e.keyCode] = 1; if (e.target.nodeName !== 'INPUT') e.preventDefault(); });
+      window.removeEventListener('keyup', e => delete this.keys[e.keyCode]);
    }
 
    // recursively process game state and redraw canvas
@@ -39,7 +58,7 @@ class GameCanvas extends Component {
       this._ballCollisionY();
       this._userInput(this.player1);
       this._userInput(this.player2);
-      window.requestAnimationFrame(this._renderLoop);
+      this.frameId = window.requestAnimationFrame(this._renderLoop);
    }
 
    // watch ball movement in Y dimension and handle top/bottom boundary collisions, then call _ballCollisionX
