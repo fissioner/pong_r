@@ -1,20 +1,28 @@
 import React, { Component } from 'react';
 
-class GameInterface extends Component {
-    constructor() {
-        super()
-    }
+class GameCanvas extends Component {
+
 
     componentDidMount = () => {
         this._initializeGameCanvas()
     }
 
     shouldComponentUpdate = props => {
-        if (props.velocity) this._updateBallVelocity(props.velocity)
+        if (props.velocity) {this._updateBallVelocity(props.velocity);
+            if (props.start) this._restart();
+        }
 
         return false;
     }
 
+    _restart = () => {
+        window.cancelAnimationFrame(this.animation);
+        this.p1Score = 0;
+        this.p2Score = 0;
+        this.gameBall.x = this.canvas.width / 2;
+        this.gameBall.y = this.canvas.height / 2;
+        this._renderLoop();
+    }
 
     _initializeGameCanvas = () => {
         this.canvas = this.refs.pong_canvas;
@@ -28,18 +36,16 @@ class GameInterface extends Component {
 
         this.keys = {};
 
-        window.addEventListener('keydown', e => { this.keys[e.keyCode] = 1; e.preventDefault(); })
+        window.addEventListener('keydown', e => { this.keys[e.keyCode] = 1 })
         window.addEventListener('keyup', e => delete this.keys[e.keyCode])
-
         this.player1 = new this.GameClasses.Box({ x: 10, y: 200, width: 15, height: 80, color: '#FFF', velocityY: 2 });
         this.player2 = new this.GameClasses.Box({ x: 725, y: 200, width: 15, height: 80, color: '#FFF', velocityY: 2 });
         this.boardDivider = new this.GameClasses.Box({ x: ((this.canvas.width / 2) - 2.5), y: -1, width: 5, height: (this.canvas.height + 1), color: '#FFF' });
-        this.gameBall = new this.GameClasses.Box({ x: (this.canvas.width / 2), y: (this.canvas.height / 2), width: 15, height: 15, color: '#FF0000', velocityX: 1, velocityY: 1 });
-
-        this._renderLoop();
+        this.gameBall = new this.GameClasses.Box({ x: (this.canvas.width / 2), y: (this.canvas.height / 2), width: 15, height: 15, color: '#FF0000', velocityX: parseInt(this.props.velocity), velocityY: parseInt(this.props.velocity) });
     }
 
     _updateBallVelocity = val => {
+        val = parseInt(val);
         let newX = this.gameBall.velocityX > 0 ? val : val * -1;
         let newY = this.gameBall.velocityY > 0 ? val : val * -1;
         this.gameBall.velocityX = newX;
@@ -47,27 +53,52 @@ class GameInterface extends Component {
     }
 
     _renderLoop = () => {
+        this.player1.color = this.props.p1Color;
+        this.player2.color = this.props.p2Color;
+        this.gameBall.color = this.props.ballColor;
         this._ballCollisionY();
         this._userInput(this.player1);
         this._userInput(this.player2);
-        window.requestAnimationFrame(this._renderLoop);
+        if (this.props.start) { this.animation = window.requestAnimationFrame(this._renderLoop); }
     }
 
     _drawRender = () => {
+        if (this.props.maxScore == this.p1Score || this.props.maxScore == this.p2Score) {
+            this._restart();
+        }
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this._displayScore1();
-        this._displayScore2();
-        this._drawBox(this.player1);
-        this._drawBox(this.player2)
-        this._drawBox(this.boardDivider);
-        this._drawBox(this.gameBall);
+        if (this.props.start) {
+            this._displayScore1();
+            this._displayScore2();
+            this._drawBox(this.player1);
+            this._drawBox(this.player2)
+            this._drawBox(this.boardDivider);
+            if (this.props.ballShape === 'square') {
+                this._drawBox(this.gameBall);
+            }
+            else if (this.props.ballShape === 'circle') {
+                this.ctx.beginPath();
+                this.ctx.arc(this.gameBall.x, this.gameBall.y, 7.5, 0, 2 * Math.PI);
+                this.ctx.fillStyle = this.gameBall.color;
+                this.ctx.fill();
+            }
+            else {
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.gameBall.x, this.gameBall.y - 7.5);
+                this.ctx.lineTo(this.gameBall.x + 7.5, this.gameBall.y + 7.5);
+                this.ctx.lineTo(this.gameBall.x - 7.5, this.gameBall.y + 7.5);
+                this.ctx.closePath();
+                this.ctx.fillStyle = this.gameBall.color;
+                this.ctx.fill();
+            }
+        }
     }
 
     _drawBox = box => {
         this.ctx.fillStyle = box.color;
         this.ctx.fillRect(box.x, box.y, box.width, box.height);
     }
-    
+
     _ballCollisionY = () => {
         if (((this.gameBall.y + this.gameBall.velocityY) <= 0) || ((this.gameBall.y + this.gameBall.velocityY + this.gameBall.height) >= this.canvas.height)) {
             this.gameBall.velocityY = this.gameBall.velocityY * -1;
@@ -79,7 +110,7 @@ class GameInterface extends Component {
         }
         this._ballCollisionX();
     }
-    
+
     _ballCollisionX = () => {
         if (
             (
@@ -172,4 +203,4 @@ class GameInterface extends Component {
     }
 }
 
-export default GameInterface;
+export default GameCanvas;
