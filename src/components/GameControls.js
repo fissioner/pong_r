@@ -3,10 +3,12 @@ import React, { Component } from 'react'
 export default class GameControls extends Component {
     render() {
         var white = { color: 'white' };
+        var isDisabled = this.props.start;
         //Replace disabled value with this.stat.start after double-click start button resolved.
         return (
             <article>
                 <button onClick={this.props.startGame} >Start</button>
+                <button onClick={this.props.stopGame} >Stop</button>
                 <label style={white}>Velocity: </label>
                 <select onChange={this.props.updateVel} >
                     <option value={1}>1</option>
@@ -15,7 +17,7 @@ export default class GameControls extends Component {
 
                 </select>
                 <label style={white}>Max Score: </label>
-                <input onChange={this.props.updateScore} value={this.props.maxScore} placeholder='10' type='number' />
+                <input onChange={this.props.updateScore} min={1} value={this.props.maxScore} placeholder='10' type='number' disabled={isDisabled} style={isDisabled?{background: 'gray', color: 'white'}:{}}/>
                 <label style={white}>Player 1: </label>
                 <select onChange={this.props.p1Color} >
                     <option value='white'>white</option>

@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 
 class GameCanvas extends Component {
 
-
     componentDidMount = () => {
         this._initializeGameCanvas()
     }
 
     shouldComponentUpdate = props => {
-        if (props.velocity) {this._updateBallVelocity(props.velocity);
+        if (props.ballVelX || props.ballVelY) {
+            this._updateBallVelocity(props.ballVelX, props.ballVelX);
             if (props.start) this._restart();
         }
 
@@ -44,18 +44,27 @@ class GameCanvas extends Component {
         this.gameBall = new this.GameClasses.Box({ x: (this.canvas.width / 2), y: (this.canvas.height / 2), width: 15, height: 15, color: '#FF0000', velocityX: parseInt(this.props.velocity), velocityY: parseInt(this.props.velocity) });
     }
 
-    _updateBallVelocity = val => {
-        val = parseInt(val);
-        let newX = this.gameBall.velocityX > 0 ? val : val * -1;
-        let newY = this.gameBall.velocityY > 0 ? val : val * -1;
+    _updateBallVelocity = (velX, velY) => {
+        velX = parseInt(velX);
+        velY = parseInt(velY);
+        let newX = this.gameBall.velocityX > 0 ? velX : velX * -1;
+        let newY = this.gameBall.velocityY > 0 ? velY : velY * -1;
         this.gameBall.velocityX = newX;
         this.gameBall.velocityY = newY;
     }
 
     _renderLoop = () => {
         this.player1.color = this.props.p1Color;
+        this.player1.height = this.props.p1H;
+        this.player1.width = this.props.p1W;
+        this.player1.velocityY = this.props.p1Vel
         this.player2.color = this.props.p2Color;
+        this.player2.width = this.props.p2W;
+        this.player2.height = this.props.p2H;
+        this.player2.velocityY = this.props.p2Vel;
         this.gameBall.color = this.props.ballColor;
+        this.gameBall.height = this.props.ballH;
+        this.gameBall.width = this.props.ballW;
         this._ballCollisionY();
         this._userInput(this.player1);
         this._userInput(this.player2);
@@ -64,7 +73,8 @@ class GameCanvas extends Component {
 
     _drawRender = () => {
         if (this.props.maxScore == this.p1Score || this.props.maxScore == this.p2Score) {
-            this._restart();
+            this.props.stopGame();
+            this._displayWinner();
         }
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.props.start) {
@@ -152,6 +162,14 @@ class GameCanvas extends Component {
         this.ctx.font = '20px Arial';
         this.ctx.fillStyle = 'rgb(255, 255, 255)';
         this.ctx.fillText(this.p2Score, ((this.canvas.width / 2) + 33), 30);
+    }
+
+    _displayWinner = () => {
+        this.ctx.beginPath();
+        this.ctx.font = '80px Arial';
+        this.ctx.fillStyle = 'rgb(255, 255, 255)';
+        this.ctx.textAlign = "center";
+        this.ctx.fillText('P1 Wins!', (this.canvas.width / 2), (this.canvas.height / 2));
     }
 
     _userInput = () => {
