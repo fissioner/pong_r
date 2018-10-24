@@ -8,7 +8,7 @@ class GameInterface extends Component {
         super();
         this.state = {
             start: false,
-            delay: 10000,
+            delay: 0,
             maxScore: 10,
             ball: {
                 color: 'white',
